@@ -7,7 +7,7 @@ download_kali_files() {
 }
 
 build_preseed_configs() {
-    export GIT_REPO_RAW_URL='https://raw.githubusercontent.com/iesplin/kali-preseed/master/preseed'
+    export GIT_REPO_RAW_URL='https://raw.githubusercontent.com/bbirkinbine/kali-preseed/master/preseed'
     while IFS=, read -r preseed_file packages
     do
         export PRESEED_PACKAGES="$packages"

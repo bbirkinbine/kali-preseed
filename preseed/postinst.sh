@@ -8,7 +8,7 @@
 # and in the live-build configuration).
 
 configure_sources_list() {
-    if grep -q '^deb http' /etc/apt/sources.list; then
+    if grep -q '^deb ' /etc/apt/sources.list; then
 	echo "INFO: sources.list is configured, everything is fine"
 	return
     fi
@@ -17,10 +17,10 @@ configure_sources_list() {
 
     cat >/etc/apt/sources.list <<END
 # See https://www.kali.org/docs/general-use/kali-linux-sources-list-repositories/
-deb http://http.kali.org/kali kali-rolling main contrib non-free
+deb http://http.kali.org/kali kali-rolling main contrib non-free non-free-firmware
 
 # Additional line for source packages
-# deb-src http://http.kali.org/kali kali-rolling main contrib non-free
+# deb-src http://http.kali.org/kali kali-rolling main contrib non-free non-free-firmware
 END
     apt-get update
 }
@@ -28,7 +28,7 @@ END
 get_user_list() {
     for user in $(cd /home && ls); do
 	if ! getent passwd "$user" >/dev/null; then
-	    echo "WARNING: user '$user' is invalid but /home/$user exists"
+	    echo "WARNING: user '$user' is invalid but /home/$user exists" >&2
 	    continue
 	fi
 	echo "$user"
@@ -51,22 +51,24 @@ configure_zsh() {
     done
 }
 
-# This is generically named in case we want to add other groups in the future.
 configure_usergroups() {
-    # Create the kaboxer group if needed
+    # Ensure those groups exist
     addgroup --system kaboxer || true
-    # Create the wireshark group if needed
     addgroup --system wireshark || true
 
     # adm - read access to log files
-    # kaboxer - for kaboxer
     # dialout - for serial access
+    # kaboxer - for kaboxer
+    # vboxsf - shared folders for virtualbox guest
     # wireshark - capture sessions in wireshark
-    kali_groups="adm,kaboxer,dialout,wireshark"
+    kali_groups="adm dialout kaboxer vboxsf wireshark"
 
-    for user in $(get_user_list); do
+    for user in $(get_user_list | grep -xv root); do
 	echo "INFO: adding user '$user' to groups '$kali_groups'"
-	usermod -a -G "$kali_groups" $user || true
+	for grp in $kali_groups; do
+	    getent group $grp >/dev/null || continue
+	    usermod -a -G $grp $user
+	done
     done
 }
 
@@ -86,3 +88,5 @@ configure_swapfile() {
 }
 
 configure_swapfile
+systemctl enable ssh
+systemctl start ssh

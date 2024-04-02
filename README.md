@@ -23,4 +23,4 @@ Preseed configurations for Kali Linux. These are intended to be used for creatin
 
     with     
 
-        auto=true url=https://raw.githubusercontent.com/iesplin/kali-preseed/master/preseed/{preseed_file} priority=critical
+        auto=true url=https://raw.githubusercontent.com/bbirkinbine/kali-preseed/master/preseed/{preseed_file} priority=critical

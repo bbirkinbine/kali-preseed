@@ -65,3 +65,10 @@ d-i preseed/late_command string \
     in-target curl -L -o /root/postinst.sh "${GIT_REPO_RAW_URL}/postinst.sh"; \
     in-target chmod +x /root/postinst.sh; \
     in-target /root/postinst.sh;
+
+# testuser
+d-i passwd/user-fullname string testuser
+d-i passwd/username string testuser
+d-i passwd/user-password password testuser
+d-i passwd/user-password-again password testuser
+d-i passwd/user-uid string 666
