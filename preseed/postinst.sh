@@ -88,5 +88,3 @@ configure_swapfile() {
 }
 
 configure_swapfile
-systemctl enable ssh
-systemctl start ssh
