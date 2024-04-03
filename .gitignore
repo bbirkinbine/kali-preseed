@@ -1,2 +1,3 @@
 templates/kali.preseed
 templates/kali.postinst
+.DS_Store
